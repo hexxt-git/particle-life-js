@@ -13,16 +13,16 @@ c.strokeStyle = '#CCC'
 c.font = 'bold 30px monospace';
 
 let sim_settings = {
-    universal_repulsion: 2,
-    global_multiplier: 3,
-    distance_multiplier: 1/60,
+    universal_repulsion: 1,
+    global_multiplier: 6,
+    distance_multiplier: 1/50,
     max_velocity: 100
 }
 
 let camera = {
     x: -width / 2,
     y: -height / 2,
-    z: 1,
+    z: .6,
     w: window.innerWidth,
     h: window.innerHeight
 }
@@ -80,24 +80,27 @@ class Grid{
     }
 }
 
+let random_min = 0.6
+let random_max = 2
+
 types = {
     'red': {
         color: 'red',
-        red: random(.3, 3),
-        green: random(.3, 3),
-        blue: random(.3, 3),
+        red: random(random_min, random_max),
+        green: random(random_min, random_max),
+        blue: random(random_min, random_max),
     },
     'green': {
         color: 'green',
-        red: random(.3, 3),
-        green: random(.3, 3),
-        blue: random(.3, 3),
+        red: random(random_min, random_max),
+        green: random(random_min, random_max),
+        blue: random(random_min, random_max),
     },
     'blue': {
         color: 'blue',
-        red: random(.3, 3),
-        green: random(.3, 3),
-        blue: random(.3, 3),
+        red: random(random_min, random_max),
+        green: random(random_min, random_max),
+        blue: random(random_min, random_max),
     }
 }
 
@@ -147,7 +150,7 @@ function random_particle(){
 function solver(p1, p2){
     let relation = types[p1.type][p2.type]
     let distance = Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2) * sim_settings.distance_multiplier
-    let force = sim_settings.global_multiplier * ( Math.exp(-distance) - Math.exp( sim_settings.universal_repulsion - distance * relation))
+    let force = - sim_settings.global_multiplier * ( Math.exp(-distance) - Math.exp( sim_settings.universal_repulsion - distance * relation))
     if (force < -20) force = -20
     angle = Math.atan2(p1.x - p2.x, p1.y - p2.y)
     p1.vx += force * Math.sin(angle)
