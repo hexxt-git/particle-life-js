@@ -46,3 +46,22 @@ function getCircle( x, y, r){
     }
     return circle
 };
+function render_rect( camera, x, y, w, h, color){
+    c.fillStyle = color
+    c.fillRect(
+        Math.round((x + camera.x) * camera.z + camera.w/2),
+        Math.round((y + camera.y) * camera.z + camera.h/2),
+        Math.round(w * camera.z), Math.round(h * camera.z)
+    )
+}
+function render_circle( camera, x, y, r, color){
+    c.fillStyle = color
+    c.beginPath()
+    c.arc(
+        Math.round((x + camera.x) * camera.z + camera.w/2),
+        Math.round((y + camera.y) * camera.z + camera.h/2),
+        Math.round(r * camera.z),
+        0, 2*Math.PI
+    )
+    c.fill()
+}

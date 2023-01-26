@@ -1,5 +1,5 @@
 body{
-    background-color: #151515;
+    background-color: #03020b;
     color: #EEE;
     font-family: monospace;
     font-size: 35px;
@@ -18,4 +18,8 @@ body{
     height: 100%;
     top: 0px;
     left: 0px;
+}
+canvas{
+    filter: blur(1px);
+    -webkit-filter: blur(1px);
 }
