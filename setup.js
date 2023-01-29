@@ -13,15 +13,15 @@ c.strokeStyle = '#CCC'
 c.font = 'bold 30px monospace';
 
 let sim_settings = {
-    map_width: 3200,
-    map_height: 1700,
-    particle_count: 1800,
+    map_width: 3500,
+    map_height: 2500,
+    particle_count: 1500,
     numb_of_types: 7,
     universal_repulsion: .35,
     global_multiplier: .40,
     distance_multiplier: 1/110,
-    max_velocity: 10,
-    friction: .95,
+    max_velocity: 50,
+    friction: .94,
     grid_cell_size: 150,
     grid_update_chance: 30,
     particle_update_chance: 30,
@@ -31,7 +31,7 @@ let sim_settings = {
 let camera = {
     x: - sim_settings.map_width / 2,
     y: - sim_settings.map_height / 2,
-    z: .33,
+    z: .3,
     w: window.innerWidth,
     h: window.innerHeight
 }
@@ -42,6 +42,8 @@ let mouse = {
     z: false,
     dx: 0,
     dy: 0,
+    world_x: 0,
+    world_y: 0,
 }
 
 window.addEventListener( 'mousemove', (event)=>{
@@ -64,6 +66,15 @@ window.addEventListener( 'keypress', (key)=>{
     if( key.key == '+' || key.key == '=' ) camera.z *= 1.1
     if( key.key == '-') camera.z *= 0.9
     if( key.key == 'g') sim_settings.render_grid = ! sim_settings.render_grid
+    if( key.key == ' ' ){
+        for(let i=0; i < particles.length; i++){
+            let distance = Math.sqrt((particles[i].x - mouse.world_x)**2 + (particles[i].y - mouse.world_y)**2)
+            let angle = Math.atan2(particles[i].x - mouse.world_x, particles[i].y - mouse.world_y)
+            let force = Math.exp(-distance / 90) * 40
+            particles[i].vx += Math.sin(angle) * force
+            particles[i].vy += Math.cos(angle) * force
+        }
+    }
 })
 
 class Grid{
@@ -125,7 +136,7 @@ class Particle{
     }
     particle_update(grid){
         if(random(0, 100) < sim_settings.particle_update_chance){
-            let found = grid.get_nearby(this.x, this.y, 2)
+            let found = grid.get_nearby(this.x, this.y, 3)
             for(let p of found){
                 if(p == this) continue
                 solver(this, p)
@@ -149,7 +160,7 @@ function solver(p1, p2){
     let relation = types[p1.type][p2.type]
     let distance = Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2) * sim_settings.distance_multiplier
     let force = - sim_settings.global_multiplier * ( Math.exp(-distance) - Math.exp( sim_settings.universal_repulsion - distance * relation))
-    if (force < -20) force = -20
+    force = clamp(force, -30, 30)
     angle = Math.atan2(p1.x - p2.x, p1.y - p2.y)
     p1.vx += force * Math.sin(angle)
     p1.vy += force * Math.cos(angle)
@@ -162,7 +173,11 @@ for(let i = 0; i < sim_settings.numb_of_types; i++){
 }
 for(let type in types){
     for(let other in types){
-        types[type][other] = random(0.2, 2.5, false)
+        if(other == type){
+            types[type][other] = random(.9, 2, false)
+        } else {
+            types[type][other] = random(0.2, 2, false)
+        }
     }
 }
 

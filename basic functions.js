@@ -21,7 +21,7 @@ function $ (id){
     return document.getElementById(id);
 };
 function randomColor (){
-    return `hsl( ${rdm(360)}, ${random( 40, 70, true)}%, ${random( 50, 70, true)}%)`
+    return `hsl( ${rdm(360)}, ${random( 50, 70, true)}%, ${random( 30, 60, true)}%)`
 };
 function getLine( x1, y1, x2, y2){
     let line = []
@@ -51,7 +51,7 @@ function render_rect( camera, x, y, w, h, color){
     c.fillRect(
         Math.round((x + camera.x) * camera.z + camera.w/2),
         Math.round((y + camera.y) * camera.z + camera.h/2),
-        Math.round(w * camera.z), Math.round(h * camera.z)
+        Math.round(w * camera.z)+1, Math.round(h * camera.z)+1
     )
 }
 function render_circle( camera, x, y, r, color){
