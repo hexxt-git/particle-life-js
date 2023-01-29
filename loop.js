@@ -1,8 +1,8 @@
 function loop(){
 
-    setTimeout(() => {
+    //setTimeout(() => {
         requestAnimationFrame(loop)
-    }, 1000 / fps);
+    //}, 1000 / fps);
     width = container.clientWidth
     height = container.clientHeight
     if( canvas.width != width ) canvas.width = width 
@@ -17,15 +17,21 @@ function loop(){
         mouse.dx = 0
         mouse.dy = 0
     }
-    grid.update(particles)
-    //grid.render()
+    if(random(0, 100) < sim_settings.grid_update_chance){
+        grid.grid_update(particles)
+    }
+    if(sim_settings.render_grid){
+        grid.render()
+    }
 
-    particles.forEach(p => {
-        p.render()
-        p.update(grid)
-        }
-    )
+    for(let i = 0; i < particles.length; i++){
+        particles[i].render()
+        particles[i].particle_update(grid)
+    }
     
 }
+
+grid.grid_update(particles)
+console.table(types)
 
 loop()
