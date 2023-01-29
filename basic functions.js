@@ -65,3 +65,6 @@ function render_circle( camera, x, y, r, color){
     )
     c.fill()
 }
+function clamp(x, min, max){
+    return Math.max(Math.min(x, max), min)
+}
