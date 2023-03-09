@@ -28,9 +28,21 @@ let sim_settings = {
     render_grid: false
 }
 
+if( JSON.parse(localStorage.getItem('sim_settings') != null) ){
+    sim_settings = JSON.parse(localStorage.getItem('sim_settings'))
+}
 
-
-
+$('submit').addEventListener('click', ()=>{
+    sim_settings.particle_count = Math.abs(Math.floor($('particle-count-input').value))
+    sim_settings.numb_of_types = Math.abs(Math.floor($('numb-of-types-input').value))
+    sim_settings.universal_repulsion = Math.floor($('universal-repulsion-input').value) / 100 * 0.35
+    sim_settings.distance_multiplier = Math.floor($('distance-multiplier-input').value ) / 100 / 70
+    sim_settings.friction = Math.floor($('friction-multiplier-input').value) / 100 * 0.94
+    sim_settings.map_height = Math.abs(Math.floor($('map-height-input').value))
+    sim_settings.map_width = Math.abs(Math.floor($('map-width-input').value))
+    localStorage.setItem('sim_settings', JSON.stringify(sim_settings))
+    location.reload()
+})
 
 
 let camera = {

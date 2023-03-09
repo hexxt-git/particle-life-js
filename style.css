@@ -1,8 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300&display=swap');
 body{
     background-color: #03020b;
     color: #EEE;
-    font-family: monospace;
-    font-size: 20px;
+    font-family: roboto;
+    font-size: 16px;
     margin: 0px;
     overflow: hidden;
     display: flex;
@@ -27,13 +28,13 @@ body{
     user-select: none;
 }
 .setting{
-    height: 35px;
+    height: 25px;
     padding: 10px;
 }
 .setting input{
     background-color: #070418;
     color: #EEE;
-    font-family: monospace;
+    font-family: roboto;
     font-size: 20px;
     border: none;
     border-bottom: #EEE solid 1px;
@@ -48,7 +49,7 @@ body{
 #submit{
     background-color: #070418;
     width: 110px;
-    height: 30px;
+    height: 35px;
     margin: auto;
     margin-bottom: 30px;
     display: flex;
@@ -57,10 +58,10 @@ body{
     border-bottom: #EEE solid 1px;
     cursor: pointer;
     user-select: none;
+    font-size: 20px;
 }
 #submit:hover{
     border-bottom: #EEE solid 2px;
-
 }
 #container{
     flex-grow: 1;
