@@ -11,8 +11,8 @@ function loop(){
 
     camera.w = width
     camera.h = height
-    mouse.world_x = (mouse.x - camera.w / 2) / camera.z - camera.x
-    mouse.world_y = (mouse.y - camera.h / 2) / camera.z - camera.y
+    mouse.world_x = (mouse.x - $('container').getBoundingClientRect().x - camera.w / 2) / camera.z - camera.x
+    mouse.world_y = (mouse.y - $('container').getBoundingClientRect().y - camera.h / 2) / camera.z - camera.y
     if(mouse.z){
         camera.x += mouse.dx
         camera.y += mouse.dy

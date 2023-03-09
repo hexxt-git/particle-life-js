@@ -13,14 +13,14 @@ c.strokeStyle = '#CCC'
 c.font = 'bold 30px monospace';
 
 let sim_settings = {
-    map_width: 3500,
+    map_width: 3000,
     map_height: 2500,
-    particle_count: 1500,
+    particle_count: 2000,
     numb_of_types: 7,
     universal_repulsion: .35,
     global_multiplier: .40,
-    distance_multiplier: 1/110,
-    max_velocity: 50,
+    distance_multiplier: 1/70,
+    max_velocity: 80,
     friction: .94,
     grid_cell_size: 150,
     grid_update_chance: 30,
@@ -28,10 +28,15 @@ let sim_settings = {
     render_grid: false
 }
 
+
+
+
+
+
 let camera = {
     x: - sim_settings.map_width / 2,
     y: - sim_settings.map_height / 2,
-    z: .3,
+    z: .4,
     w: window.innerWidth,
     h: window.innerHeight
 }
@@ -52,13 +57,13 @@ window.addEventListener( 'mousemove', (event)=>{
     mouse.x = event.x
     mouse.y = event.y
 })
-window.addEventListener( 'mousedown', ()=>{
+$('container').addEventListener( 'mousedown', ()=>{
     mouse.z = true
 })
-window.addEventListener( 'mouseup', ()=>{
+$('container').addEventListener( 'mouseup', ()=>{
     mouse.z = false
 })
-window.addEventListener( 'mouseleave', ()=>{
+$('container').addEventListener( 'mouseleave', ()=>{
     mouse.z = false
 }) 
 window.addEventListener( 'keypress', (key)=>{
@@ -70,9 +75,16 @@ window.addEventListener( 'keypress', (key)=>{
         for(let i=0; i < particles.length; i++){
             let distance = Math.sqrt((particles[i].x - mouse.world_x)**2 + (particles[i].y - mouse.world_y)**2)
             let angle = Math.atan2(particles[i].x - mouse.world_x, particles[i].y - mouse.world_y)
-            let force = Math.exp(-distance / 90) * 40
+            let force = Math.exp(-distance / 150) * 50
             particles[i].vx += Math.sin(angle) * force
             particles[i].vy += Math.cos(angle) * force
+        }
+    }
+    if( key.key == 'h'){
+        if($('hud').style.display == 'none'){
+            $('hud').style.display = 'block'
+        } else {
+            $('hud').style.display = 'none'
         }
     }
 })
@@ -131,6 +143,7 @@ class Particle{
         this.vy = 0
     }
     render(){
+        c.fillStyle = 'white'
         //render_circle(camera, this.x, this.y, 5, types[this.type].color)
         render_rect(camera, this.x, this.y, 10, 10, types[this.type].color)
     }
@@ -157,14 +170,15 @@ class Particle{
 }
 
 function solver(p1, p2){
+    if(!types.hasOwnProperty(p1.type)) return 0
+    if(!types[p1.type].hasOwnProperty(p2.type)) return 0
     let relation = types[p1.type][p2.type]
     let distance = Math.sqrt((p1.x-p2.x)**2 + (p1.y-p2.y)**2) * sim_settings.distance_multiplier
     let force = - sim_settings.global_multiplier * ( Math.exp(-distance) - Math.exp( sim_settings.universal_repulsion - distance * relation))
     force = clamp(force, -30, 30)
-    angle = Math.atan2(p1.x - p2.x, p1.y - p2.y)
+    angle = Math.atan2(p1.x - p2.x, p1.y - p2.y) 
     p1.vx += force * Math.sin(angle)
     p1.vy += force * Math.cos(angle)
-
 }
 
 let types = {}
