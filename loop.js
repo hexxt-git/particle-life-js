@@ -19,6 +19,9 @@ function loop(){
         mouse.dx = 0
         mouse.dy = 0
     }
+    if(mouse.s){
+        push_particles(10)  
+    }
     if(random(0, 100) < sim_settings.grid_update_chance){
         grid.grid_update(particles)
     }

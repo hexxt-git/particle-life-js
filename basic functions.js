@@ -21,7 +21,7 @@ function $ (id){
     return document.getElementById(id);
 };
 function randomColor (){
-    return `hsl( ${rdm(360)}, ${random( 30, 60, true)}%, ${random( 30, 60, true)}%)`
+    return `hsl( ${rdm(360)}, ${random( 40, 70, true)}%, ${random( 40, 80, true)}%)`
 };
 function getLine( x1, y1, x2, y2){
     let line = []

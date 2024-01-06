@@ -28,8 +28,15 @@ let sim_settings = {
     render_grid: false
 }
 
-if( JSON.parse(localStorage.getItem('sim_settings') != null) ){
+if(localStorage.getItem('sim_settings')){
     sim_settings = JSON.parse(localStorage.getItem('sim_settings'))
+    $('particle-count-input').value = sim_settings.particle_count
+    $('numb-of-types-input').value = sim_settings.numb_of_types
+    $('universal-repulsion-input').value = sim_settings.universal_repulsion * 100 / 0.35
+    $('distance-multiplier-input').value = sim_settings.distance_multiplier * 100 * 70
+    $('friction-multiplier-input').value = sim_settings.friction * 100 / 0.94
+    $('map-height-input').value = sim_settings.map_height
+    $('map-width-input').value = sim_settings.map_width
 }
 
 $('submit').addEventListener('click', ()=>{
@@ -43,7 +50,10 @@ $('submit').addEventListener('click', ()=>{
     localStorage.setItem('sim_settings', JSON.stringify(sim_settings))
     location.reload()
 })
-
+$('reset').addEventListener('click', ()=>{
+    localStorage.removeItem('sim_settings')
+    location.reload()
+})
 
 let camera = {
     x: - sim_settings.map_width / 2,
@@ -57,6 +67,7 @@ let mouse = {
     x: width/2,
     y: height/2,
     z: false,
+    s: false,
     dx: 0,
     dy: 0,
     world_x: 0,
@@ -69,29 +80,27 @@ window.addEventListener( 'mousemove', (event)=>{
     mouse.x = event.x
     mouse.y = event.y
 })
-$('container').addEventListener( 'mousedown', ()=>{
-    mouse.z = true
+$('container').addEventListener( 'mousedown', (e)=>{
+    if(e.button == 0) mouse.z = true
+    if(e.button == 1) mouse.s = true
 })
-$('container').addEventListener( 'mouseup', ()=>{
-    mouse.z = false
+$('container').addEventListener( 'mouseup', (e)=>{
+    if(e.button == 0) mouse.z = false
+    if(e.button == 1 || e.button == 2) mouse.s = false
 })
-$('container').addEventListener( 'mouseleave', ()=>{
-    mouse.z = false
+$('container').addEventListener( 'mouseleave', (e)=>{
+    if(e.button == 0) mouse.z = false
+    if(e.button == 1 || e.button == 2) mouse.s = false
 }) 
+$('container').addEventListener( 'wheel', (event)=>{
+    camera.z *= 1 - event.deltaY / 1000
+})
 window.addEventListener( 'keypress', (key)=>{
     if( key.key == 'r') location.reload()
     if( key.key == '+' || key.key == '=' ) camera.z *= 1.1
     if( key.key == '-') camera.z *= 0.9
     if( key.key == 'g') sim_settings.render_grid = ! sim_settings.render_grid
-    if( key.key == ' ' ){
-        for(let i=0; i < particles.length; i++){
-            let distance = Math.sqrt((particles[i].x - mouse.world_x)**2 + (particles[i].y - mouse.world_y)**2)
-            let angle = Math.atan2(particles[i].x - mouse.world_x, particles[i].y - mouse.world_y)
-            let force = Math.exp(-distance / 150) * 50
-            particles[i].vx += Math.sin(angle) * force
-            particles[i].vy += Math.cos(angle) * force
-        }
-    }
+    if( key.key == ' ') push_particles(120)
     if( key.key == 'h'){
         if($('hud').style.display == 'none'){
             $('hud').style.display = 'block'
@@ -100,6 +109,16 @@ window.addEventListener( 'keypress', (key)=>{
         }
     }
 })
+
+function push_particles(s){
+    for(let i=0; i < particles.length; i++){
+        let distance = Math.sqrt((particles[i].x - mouse.world_x)**2 + (particles[i].y - mouse.world_y)**2)
+        let angle = Math.atan2(particles[i].x - mouse.world_x, particles[i].y - mouse.world_y)
+        let force = Math.exp(-distance / 150) * s
+        particles[i].vx += Math.sin(angle) * force
+        particles[i].vy += Math.cos(angle) * force
+    }
+}
 
 class Grid{
     constructor(width, height, cell_size) {
@@ -139,7 +158,7 @@ class Grid{
     render(){
         for(let y in this.grid){
             for(let x in this.grid[y]){
-                let color = `hsla( 90, 50%, 80%, ${this.grid[y][x].length*3}%)`
+                let color = `hsla( 230, 50%, 80%, ${this.grid[y][x].length*3}%)`
                 render_rect(camera, x*this.cell_size, y*this.cell_size, this.cell_size, this.cell_size, color)
             }
         }
@@ -197,6 +216,7 @@ let types = {}
 for(let i = 0; i < sim_settings.numb_of_types; i++){
     types[rdm(1000000)] = {'color': randomColor()}
 }
+
 for(let type in types){
     for(let other in types){
         if(other == type){
@@ -211,12 +231,9 @@ function random_type(){
     return Object.keys(types)[rdm(Object.keys(types).length-1)]
 }
 
-
 function random_particle(){
     return new Particle(rdm(sim_settings.map_width-1,1), rdm(sim_settings.map_height-1, 1), random_type())
 }
+
 let grid = new Grid(sim_settings.map_width, sim_settings.map_height, sim_settings.grid_cell_size)
 let particles = new Array(sim_settings.particle_count).fill(0).map(x => random_particle())
-
-
-
